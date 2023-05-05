@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CSE 578 - Final-Project- Mini-Challenge-2018</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+    />
+    <script src="https://kit.fontawesome.com/5756c34817.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="index.css" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+    <script src="main.js"></script>
+    <script>
+      function showPopup() {
+        document.getElementById("myPopup").style.display = "block";
+      }
+
+      function closePopup() {
+        document.getElementById("myPopup").style.display = "none";
+      }
+
+      // window.onload = function () {
+      //   showPopup();
+      // };
+
+      // Function to toggle between light and dark mode
+      function toggleMode() {
+        var body = document.body;
+        var modeText = document.getElementById("modeText");
+        var chartTitle = document.querySelector(".chart-title");
+        var axisLabel = document.getElementsByClassName(".axis-label");
+        
+
+        body.classList.toggle("light");
+        body.classList.toggle("dark");
+        if (modeText.innerText === "Light Mode") {
+          modeText.innerText = "Dark Mode";
+           theme= 'light'
+           chartTitle.style.fill = "black";
+           axisLabel.style.fill = "black";
+        
+        } else {
+          modeText.innerText = "Light Mode";
+          theme= 'dark'
+          chartTitle.style.fill = "white";
+          axisLabel.style.fill = "white";
+       
+        }
+      }
+      function openFullscreen() {
+        const elem = document.querySelector(".charts_container");
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+          elem.msRequestFullscreen();
+        }
+        elem.classList.add("fullscreen");
+      }
+      
+    </script>
+  </head>
+  <body>
+    <div class="sticky-header">
+      <div class="glassmorphism">
+        <div class="photos fadeInUp">
+            <div class="member" data-name="Abhishek" data-email="abhishek@asu.edu" data-contribution="Line charts & Design">
+              <img src="./images/members/Abhishek.jpg" alt="Abhishek">
+            </div>
+            <div class="member" data-name="Ava" data-email="ava@asu.edu" data-contribution="Layout and Interactions">
+              <img src="./images/members/Ava.jpg" alt="Ava">
+            </div>
+            <div class="member" data-name="Birong" data-email="birong@asu.edu" data-contribution="Lollipop Charts">
+              <img src="./images/members/Birong.jpg" alt="Birong">
+            </div>
+            <div class="member" data-name="Freney" data-email="freney@asu.edu" data-contribution="Clustered Bubble & Design">
+              <img src="./images/members/Freney.jpg" alt="Freney">
+            </div>
+            <div class="member" data-name="Misha" data-email="misha@asu.edu" data-contribution="Innovative Map & Point Map">
+              <img src="./images/members/Misha.jpg" alt="Misha">
+            </div>
+            <div class="member" data-name="Rigved" data-email="rigved@asu.edu" data-contribution="Data wrangling & Heat Maps">
+              <img src="./images/members/Rigved.jpg" alt="Rigved">
+            </div>
+          
+          <h1 class="logo">CSE 578 Final Project MINI CHALLENGE 2 2018</h1>
+          <div class="tabs">
+            <a onclick="view2Clicked(false)" class="tab fadeInDown" id="View2Head">Home</a>
+            <a onclick="view1Clicked(false)" class="tab fadeInDown" id="View1Head">Innovative</a>
+            
+            <button type="button" class="btn btn-secondary mode-toggle fadeInDown" id="modeToggle" onclick="toggleMode()"><span id="modeText">Dark Mode</span></button>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="loader"></div>
+    <div class="d-flex justify-content-between">
+
+      <div class="home-screen">
+        <h1 class="fadeInDown" style="text-align: center; padding-top: 20px;">VAST Mini challenge-2 (2018)</h1>
+      <p  class="fadeInUp">The goal of this project was to complete the 2018 VAST Mini Challenge 2 by creating interactive, nested visualizations. To best represent our findings, we used a point map, a bubble chart, line charts, lollipop charts, an innovative circle chart, and a heatmap.
+        The purpose of the mini challenge was to analyze river contaminants within the Preserve to determine the validity of claims made by a furniture store, Kasios Office Furniture, that they are not guilty of any environmental wrongdoing. Therefore, it was important to carefully analyze the contaminants, their distribution, and any anomalies. Such findings also support answers to the task questions included in the mini challenge.
+        </p>
+        <a class="fadeInUp" onclick="takeTOPoint()" id="clickVis">click here to go to the point map!</a>
+        <br />
+        <br />
+        <br />
+        <div class="container statistics">
+          <div class="row">
+            <div class="col-sm">
+              <div class="fadeInUp">
+                The following table shows the top 5 years with the most observations- 
+                <table class="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Year</th>
+                      <th>Count</th>
+                    </tr>
+                  </thead>
+                  <tbody id="year_table">
+        
+                  </tbody>
+                </table>
+              </div> 
+            </div>
+            <div class="col-sm">
+              <div class="fadeInUp">
+                The following table shows the top 5 locations with the most observations- 
+                <table class="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Location</th>
+                      <th>Count</th>
+                    </tr>
+                  </thead>
+                  <tbody id="location_table">
+        
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-sm">
+              <div class="fadeInUp">
+                The following table shows the top 5 measures with the most counts- 
+                <table  class="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Measure</th>
+                      <th>Count</th>
+                    </tr>
+                  </thead>
+                  <tbody id="measure_table">
+        
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      <script>
+        year_table = document.getElementById("year_table");
+        location_table = document.getElementById("location_table");
+        measure_table = document.getElementById("measure_table");
+        unique_years = [{'year': 2007, 'count': 11338}, {'year': 2006, 'count': 10493}, {'year': 2005, 'count': 10448}, {'year': 2009, 'count': 10220}, {'year': 2008, 'count': 8373}, {'year': 2010, 'count': 7825}, {'year': 2016, 'count': 7780}, {'year': 2014, 'count': 7770}, {'year': 2015, 'count': 7375}, {'year': 2011, 'count': 7037}, {'year': 2013, 'count': 6250}, {'year': 2004, 'count': 5985}, {'year': 2003, 'count': 5919}, {'year': 2012, 'count': 5798}, {'year': 2000, 'count': 5436}, {'year': 2002, 'count': 5337}, {'year': 1999, 'count': 4926}, {'year': 2001, 'count': 4621}, {'year': 1998, 'count': 3893}];
+        unique_locations = [{'location': 'Boonsri', 'count': 31314}, {'location': 'Chai', 'count': 31245}, {'location': 'Kannika', 'count': 22152}, {'location': 'Sakda', 'count': 21429}, {'location': 'Kohsoom', 'count': 7895}, {'location': 'Somchair', 'count': 7537}, {'location': 'Busarakhan', 'count': 7492}, {'location': 'Achara', 'count': 2855}, {'location': 'Decha', 'count': 2731}, {'location': 'Tansanee', 'count': 2174}]
+        unique_measures = [{'measure': 'Water temperature', 'count': 5031}, {'measure': 'Nitrites', 'count': 4791}, {'measure': 'Ammonium', 'count': 4790}, {'measure': 'Nitrates', 'count': 4786}, {'measure': 'Orthophosphate-phosphorus', 'count': 4782}, {'measure': 'Total phosphorus', 'count': 4600}, {'measure': 'Dissolved oxygen', 'count': 4531}, {'measure': 'Biochemical Oxygen', 'count': 4488}, {'measure': 'Manganese', 'count': 4039}, {'measure': 'Chlorides', 'count': 3961}, {'measure': 'Chemical Oxygen Demand (Mn)', 'count': 3890}, {'measure': 'Magnesium', 'count': 3796}, {'measure': 'Calcium', 'count': 3765}, {'measure': 'Chemical Oxygen Demand (Cr)', 'count': 3718}, {'measure': 'Sulphates', 'count': 3253}, {'measure': 'Chromium', 'count': 3015}, {'measure': 'Lead', 'count': 3006}, {'measure': 'Copper', 'count': 3002}, {'measure': 'Zinc', 'count': 2982}, {'measure': 'Cadmium', 'count': 2963}, {'measure': 'Bicarbonates', 'count': 2826}, {'measure': 'Total dissolved salts', 'count': 2789}, {'measure': 'Iron', 'count': 2710}, {'measure': 'gamma-Hexachlorocyclohexane', 'count': 2580}, {'measure': 'Total nitrogen', 'count': 2553}, {'measure': 'Nickel', 'count': 2442}, {'measure': 'Anionic active surfactants', 'count': 2220}, {'measure': 'p,p-DDT', 'count': 2209}, {'measure': 'Oxygen saturation', 'count': 2177}, {'measure': 'Sodium', 'count': 2171}, {'measure': 'Potassium', 'count': 2142}, {'measure': 'Atrazine', 'count': 2137}, {'measure': 'Mercury', 'count': 1764}, {'measure': 'Total hardness', 'count': 1672}, {'measure': 'Silica (SiO2)', 'count': 1668}, {'measure': 'Total coliforms', 'count': 1615}, {'measure': 'Fecal coliforms', 'count': 1490}, {'measure': 'Fecal streptococci ', 'count': 1301}, {'measure': 'Macrozoobenthos', 'count': 1273}, {'measure': 'Petroleum hydrocarbons', 'count': 1185}, {'measure': 'Arsenic', 'count': 1004}, {'measure': 'Endrin', 'count': 710}, {'measure': 'Aldrin', 'count': 692}, {'measure': 'p,p-DDE', 'count': 661}, {'measure': 'beta-Hexaxchlorocyclohexane', 'count': 639}, {'measure': 'p,p-DDD', 'count': 632}, {'measure': 'alpha-Hexachlorocyclohexane', 'count': 603}, {'measure': 'Dieldrin', 'count': 597}, {'measure': 'Heptachlor', 'count': 589}, {'measure': 'Endosulfan (alpha)', 'count': 566}, {'measure': 'Dissolved silicates', 'count': 564}, {'measure': 'Endosulfan (beta)', 'count': 528}, {'measure': 'Alachlor', 'count': 528}, {'measure': 'Metolachlor', 'count': 522}, {'measure': 'Total dissolved phosphorus', 'count': 521}, {'measure': 'AOX', 'count': 492}, {'measure': 'Heptachloroepoxide', 'count': 491}, {'measure': 'AGOC-3A', 'count': 474}, {'measure': 'Methylosmoline', 'count': 474}, {'measure': 'Tetrachloromethane', 'count': 474}, {'measure': 'Chlorodinine', 'count': 474}, {'measure': 'Simazine', 'count': 441}, {'measure': 'Total organic carbon', 'count': 418}, {'measure': 'Sulfides', 'count': 389}, {'measure': 'Cyanides', 'count': 386}, {'measure': 'Total extractable matter', 'count': 156}, {'measure': 'Aluminium', 'count': 126}, {'measure': 'Barium', 'count': 120}, {'measure': 'Cesium', 'count': 120}, {'measure': 'Organic nitrogen', 'count': 110}, {'measure': 'Benzo(b)fluoranthene', 'count': 98}, {'measure': 'PCB 101', 'count': 98}, {'measure': 'Fluoranthene', 'count': 98}, {'measure': 'PCB 138', 'count': 98}, {'measure': 'Benzo(k)fluoranthene', 'count': 98}, {'measure': 'PCB 180', 'count': 98}, {'measure': 'PCB 153', 'count': 98}, {'measure': 'Benzo(a)pyrene', 'count': 98}, {'measure': 'Naphthalene', 'count': 90}, {'measure': 'Benzo(a)anthracene', 'count': 90}, {'measure': 'Hexachlorobenzene', 'count': 90}, {'measure': 'Phenanthrene', 'count': 90}, {'measure': 'Anthracene', 'count': 90}, {'measure': 'Isodrin', 'count': 89}, {'measure': 'Pentachlorobenzene', 'count': 88}, {'measure': 'Chrysene', 'count': 76}, {'measure': 'Acenaphthene', 'count': 76}, {'measure': 'Acenaphthylene', 'count': 76}, {'measure': 'Pyrene', 'count': 76}, {'measure': '1,2,4-Trichlorobenzene', 'count': 76}, {'measure': '1,2,3-Trichlorobenzene', 'count': 76}, {'measure': 'Selenium', 'count': 75}, {'measure': 'Inorganic nitrogen', 'count': 64}, {'measure': 'Carbonates', 'count': 36}, {'measure': 'Benzo(g,h,i)perylene', 'count': 22}, {'measure': 'Indeno(1,2,3-c,d)pyrene', 'count': 22}, {'measure': 'Dissolved organic carbon', 'count': 20}, {'measure': 'Methoxychlor', 'count': 16}, {'measure': 'Fluorene', 'count': 15}, {'measure': 'Berilium', 'count': 13}, {'measure': 'Boron', 'count': 13}, {'measure': 'PCB 118', 'count': 12}, {'measure': 'Trifluralin', 'count': 12}, {'measure': 'PCB 28', 'count': 8}, {'measure': 'PCB 52', 'count': 8}, {'measure': 'PAHs', 'count': 7}];
+        
+        for(i = 0;i < 5;i++)
+        {
+            let table = document.getElementById("year_table");
+            let row = document.createElement("tr")
+      
+            // Create cells
+            let c1 = document.createElement("td");
+            let c2 = document.createElement("td");
+
+            c1.innerText = unique_years[i].year;
+            c2.innerText = unique_years[i].count;
+
+            row.appendChild(c1);
+            row.appendChild(c2);
+
+            table.appendChild(row);
+        }
+        for(i = 0;i < 5;i++)
+        {
+          let table = document.getElementById("location_table");
+          let row = document.createElement("tr")
+      
+          // Create cells
+          let c1 = document.createElement("td");
+          let c2 = document.createElement("td");
+
+          c1.innerText = unique_locations[i].location;
+          c2.innerText = unique_locations[i].count;
+
+          row.appendChild(c1);
+          row.appendChild(c2);
+
+          table.appendChild(row);
+        }
+        for(i = 0;i < 5;i++)
+        {
+            let table = document.getElementById("measure_table");
+            let row = document.createElement("tr")
+        
+            // Create cells
+            let c1 = document.createElement("td");
+            let c2 = document.createElement("td");
+
+            c1.innerText = unique_measures[i].measure;
+            c2.innerText = unique_measures[i].count;
+
+            row.appendChild(c1);
+            row.appendChild(c2);
+
+            table.appendChild(row);
+        }
+      </script>
+      </div>
+      <div class="me-3">
+        <div class="instructions">
+          <span style="cursor: pointer; padding-right: 7px;"><i class="fa-solid fa-circle-info fa-l"></i></span>
+          <span style="text-align: center; cursor: pointer;">Help</span>
+        <div class="instructionstext">To interact with the visualizations, click on the <a onclick="takeTOPoint()" id="clickVis">link</a> of Point Map. There are two
+          ways to interact with the visualizations on the Point Map. <br /><br />
+          (i) The first way is to draw a lasso on the map, which
+          will allow you to view the innovative chart. After drawing the lasso, click on the circle, and you'll be able to
+          see the Heat Map. <br /><br />
+          (ii) The second way to interact with the visualizations is to click on the location circle on the
+          Point Map. This will bring up a bubble chart and a line chart, providing you with more detailed information
+          about the data. To view the month-wise data, click on the the line which will display a lollipop chart.<br /><br />
+          Both of these methods offer different views of the same data, giving users the flexibility to explore the
+          information in a more visual and intuitive way. Whether you're looking for specific insights or want to analyze
+          the data from multiple perspectives, these visualizations provide a powerful tool for interpreting and
+          understanding the data. </div>
+          </div>
+      </div>
+    </div>
+    
+    <div class="container" id="vis-container">
+    <!-- Pointmap -->
+    <div id="pointmap" class="col pointmap">
+      <h1 class="pointmap-header fadeInDown">Pointmap</h1>
+      <div class="pointmap-header-1 fadeInUp">This chart shows the average value of the selected contaminant for the selected year over all locations</div>
+        <div class="contaminant">
+          <p style="margin-bottom: 10px">
+            <strong>Choose a contaminant:</strong>
+          </p>
+          <select id="Contaminant" class="form-select" onchange="contaminantChanged()" style="width: 200px;"></select>
+        </div>
+        <div id="PointMap">
+          <svg class="fadeInUp"id="pointmapsvg" height="500" width="500">
+            <image href="images/Waterways Final.jpg" height="500" width="500" />
+          </svg>
+        </div>
+        <div class="year-range fadeInDown">
+        <p style="margin-bottom: 0">
+          <label for="customRange2" class="form-label"
+            ><strong>Select Year:</strong></label
+          >
+        </p>
+        <input
+          type="range"
+          class="form-range"
+          min="1998"
+          max="2016"
+          id="yearRange"
+          style="width: 710px; "
+          onchange="rangeChanged()"
+        />
+        <div class="ticks">
+          <!-- You could generate the ticks based on your min, max & step values. -->
+          <span class="tick">1998</span>
+          <span class="tick">1999</span>
+          <span class="tick">2000</span>
+          <span class="tick">2001</span>
+          <span class="tick">2002</span>
+          <span class="tick">2003</span>
+          <span class="tick">2004</span>
+          <span class="tick">2005</span>
+          <span class="tick">2006</span>
+          <span class="tick">2007</span>
+          <span class="tick">2008</span>
+          <span class="tick">2009</span>
+          <span class="tick">2010</span>
+          <span class="tick">2011</span>
+          <span class="tick">2012</span>
+          <span class="tick">2013</span>
+          <span class="tick">2014</span>
+          <span class="tick">2015</span>
+          <span class="tick">2016</span>
+        </div>
+      </div>
+      </div>
+    <div class="view-1" id="View1" style="display: none;">
+     
+      <!-- Innovative Chart -->
+      <div class="fadeInUp" id="innovativeChart">
+        <div class="spinner-border" role="status" id="loader" style="display: block;">
+          <span class="sr-only"></span>
+        </div>
+      </div>
+
+      <!-- Heatmap -->
+      <div class="calendar-map" id="Heatmap"></div>
+
+      </div>
+      <div class="view-2" id="View2" style="display: block;">
+        <div id="linechart1" style="display: none;">
+          <div class="popup" id="myPopup">
+            <div class="popup-content" id="popup-content">
+              <span class="popup-close" id="animateBtn" onclick="closePopup()"
+                >&times;</span
+              >
+            </div>
+          </div>
+          <div class="line-container pt-5" id="LineBubbleContainer">
+            <div class="bubble-line">
+              <!-- Scatterplot -->
+
+              <div><h3 class="d-flex justify-content-center" id="selectedLocation">All Locations</h3></div>
+              
+              <div id="scatterplot" class="d-flex justify-content-center">
+                <svg class="p-4" id="bubblechartsvg" height="520" width="600"></svg>
+              </div>
+              
+              <div class="charts_container">
+                <div class='fadeInUp' id="charts"></div>
+                <div
+                  id="tooltip"
+                  style="position: absolute; opacity: 0; pointer-events: none"
+                ></div>
+              </div>
+            </div>
+            <div class="controlPanel ps-5">
+              <div class="dateRanges">
+                <div>
+                  <label for="fromDropdown">From:</label>
+                  <select id="fromDropdown"></select>
+                </div>
+                <div>
+                  <label for="toDropdown">To:</label>
+                  <select id="toDropdown">
+                  </select>
+                </div>
+                <button class="fadeInUp" id="submitRange">Submit</button>
+             
+              </div>
+              <div></div>
+              <label
+                ><input type="checkbox" checked id="selectAllCheckbox" /> Select
+                All</label
+              >
+              <input type="text" id="searchInput" placeholder="Search measures" />
+              <div id="checkboxesContainer"></div>
+            </div>
+           
+          </div>
+        </div>
+  
+        <!-- Bar Chart 1 -->
+        <div id="barchart1"></div>
+  
+        <!-- Bar Chart 2 -->
+        <div id="barchart2"></div>
+      </div>
+      </div>
+      
+    </div>
+  </div>
+  </body>
+</html>
